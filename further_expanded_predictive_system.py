@@ -1,0 +1,58 @@
+
+from sklearn.metrics import accuracy_score
+
+class FurtherExpandedPredictiveSystem:
+    def __init__(self):
+        self.rf_model = RandomForestClassifier(n_estimators=150)
+        self.lr_model = LogisticRegression(max_iter=2000)
+        self.market_data = []
+        self.labels = []
+        self.multi_stage_predictions = []
+        self.model_accuracy = 0
+    
+    def process_market_data(self, market_data):
+        # پردازش داده‌های بازار برای هر مرحله از پیش‌بینی
+        features = [market_data['sentiment'], market_data['volatility'], market_data['price_change']]
+        self.market_data.append(features)
+        self.labels.append(market_data['buy_sell_signal'])
+        return features
+
+    def train_models(self):
+        # آموزش مدل‌های پیش‌بینی
+        if len(self.market_data) > 0:
+            X = np.array(self.market_data)
+            y = np.array(self.labels)
+            self.rf_model.fit(X, y)
+            self.lr_model.fit(X, y)
+
+    def make_predictions(self, market_data):
+        # پیش‌بینی با استفاده از مدل‌های پیشرفته
+        features = [market_data['sentiment'], market_data['volatility'], market_data['price_change']]
+        rf_prediction = self.rf_model.predict([features])
+        lr_prediction = self.lr_model.predict([features])
+        
+        # ترکیب پیش‌بینی‌ها از هر مدل
+        combined_prediction = "hold"
+        if rf_prediction == 1 and lr_prediction == 1:
+            combined_prediction = "buy"
+        elif rf_prediction == 0 and lr_prediction == 0:
+            combined_prediction = "sell"
+        
+        self.multi_stage_predictions.append(combined_prediction)
+        return combined_prediction
+    
+    def evaluate_model_accuracy(self):
+        # ارزیابی دقت مدل‌ها
+        X = np.array(self.market_data)
+        y = np.array(self.labels)
+        rf_predictions = self.rf_model.predict(X)
+        lr_predictions = self.lr_model.predict(X)
+        
+        rf_accuracy = accuracy_score(y, rf_predictions)
+        lr_accuracy = accuracy_score(y, lr_predictions)
+        
+        self.model_accuracy = (rf_accuracy + lr_accuracy) / 2
+        return self.model_accuracy
+
+    def get_predictions(self):
+        return self.multi_stage_predictions
