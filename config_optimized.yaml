@@ -1,0 +1,12 @@
+﻿trading:
+  instrument: "XAUUSD"
+  timeframe: "H1"
+  initial_capital: 10000
+  risk_percentage: 1.5
+  max_positions: 3
+
+model:
+  sequence_length: 60
+  epochs: 50
+  batch_size: 32
+  train_test_split: 0.8
