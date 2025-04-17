@@ -1,5 +1,7 @@
-
+import requests
+import numpy as np
 from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score
 
 class AdvancedDataIntegrationPredictiveSystem:
     def __init__(self):
