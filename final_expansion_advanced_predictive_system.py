@@ -1,6 +1,6 @@
-
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import classification_report
+from sklearn.ensemble import VotingClassifier
 
 class FinalExpansionAdvancedPredictiveSystem:
     def __init__(self):
