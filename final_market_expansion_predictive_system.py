@@ -2,8 +2,6 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.ensemble import StackingClassifier
-from sklearn.metrics import accuracy_score
-import numpy as np
 
 class FinalMarketExpansionPredictiveSystem:
     def __init__(self):
