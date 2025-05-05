@@ -2,6 +2,9 @@ from sklearn.ensemble import StackingClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.metrics import accuracy_score
+import numpy as np
 
 class UltimateStrategyExpansionPredictiveSystem:
     def __init__(self):

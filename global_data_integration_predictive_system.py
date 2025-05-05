@@ -1,5 +1,10 @@
 import requests
 from sklearn.ensemble import VotingClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+import numpy as np
+from sklearn.metrics import accuracy_score
 
 class GlobalDataIntegrationPredictiveSystem:
     def __init__(self):
