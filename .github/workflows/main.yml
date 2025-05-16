@@ -22,3 +22,6 @@ jobs:
     - name: Run tests
       run: |
         echo "Tests passed"
+    - name: Build and Deploy
+      run: |
+        echo "Building and deploying the application"
