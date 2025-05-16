@@ -72,9 +72,3 @@ class FinalRealTimeOptimizationPredictiveSystem:
     
     def get_predictions(self):
         return self.multi_stage_predictions
-
-    def process_live_data(self):
-        # پردازش داده‌های زنده برای تحلیل و پیش‌بینی
-        for data in self.live_data:
-            self.process_market_data(data['data'])
-            self.make_predictions(data['data'])
