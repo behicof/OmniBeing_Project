@@ -4,6 +4,11 @@ from final_market_optimization_system import FinalMarketOptimizationSystem
 
 def main():
     # Create instances of the predictive systems
+    """
+    Demonstrates the usage of predictive and integration systems with sample market data.
+    
+    Creates instances of real-time optimization, market integration, and market optimization systems. Processes sample market data through each system, trains predictive models, generates predictions, and prints the results.
+    """
     real_time_system = FinalRealTimeOptimizationPredictiveSystem()
     market_integration_system = MarketIntegrationSystem()
     market_optimization_system = FinalMarketOptimizationSystem()
