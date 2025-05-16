@@ -4,7 +4,7 @@ scikit-learn>=1.0.0
 tensorflow>=2.8.0
 keras>=2.8.0
 matplotlib>=3.5.0
-MetaTrader5>=5.0.34
+MetaTrader5==5.0.34 --extra-index-url https://pypi.example.com/simple
 PyYAML>=6.0
 pyttsx3>=2.90
 SpeechRecognition>=3.8.1
