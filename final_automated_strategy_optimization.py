@@ -1,4 +1,3 @@
-
 from sklearn.ensemble import VotingClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC

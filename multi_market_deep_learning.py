@@ -1,7 +1,7 @@
-
 import requests
 import json
 from sklearn.neural_network import MLPClassifier
+import numpy as np
 
 class MultiMarketDeepLearning:
     def __init__(self):

@@ -1,6 +1,7 @@
-
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+import numpy as np
+from sklearn.metrics import accuracy_score
 
 class AdvancedPredictiveSystem:
     def __init__(self):
@@ -40,6 +41,19 @@ class AdvancedPredictiveSystem:
         
         self.multi_stage_predictions.append(combined_prediction)
         return combined_prediction
+
+    def evaluate_model_accuracy(self):
+        # ارزیابی دقت مدل‌ها
+        X = np.array(self.market_data)
+        y = np.array(self.labels)
+        rf_predictions = self.rf_model.predict(X)
+        lr_predictions = self.lr_model.predict(X)
+        
+        rf_accuracy = accuracy_score(y, rf_predictions)
+        lr_accuracy = accuracy_score(y, lr_predictions)
+        
+        self.model_accuracy = (rf_accuracy + lr_accuracy) / 2
+        return self.model_accuracy
 
     def get_predictions(self):
         return self.multi_stage_predictions

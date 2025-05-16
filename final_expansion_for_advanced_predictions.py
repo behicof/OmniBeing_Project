@@ -1,10 +1,10 @@
-
 from sklearn.ensemble import VotingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
 
 class FinalExpansionForAdvancedPredictions:
     def __init__(self):
