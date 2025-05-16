@@ -1,9 +1,9 @@
-
 from sklearn.ensemble import VotingClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
+import requests
 
 class FinalRealTimeOptimizationPredictiveSystem:
     def __init__(self):
@@ -27,14 +27,19 @@ class FinalRealTimeOptimizationPredictiveSystem:
         self.labels = []
         self.multi_stage_predictions = []
         self.model_accuracy = 0
-    
+        self.live_data = []
+
+    def receive_live_data(self, platform_name, data):
+        # دریافت داده‌های زنده از پلتفرم‌های مختلف
+        self.live_data.append({"platform": platform_name, "data": data})
+
     def process_market_data(self, market_data):
         # پردازش داده‌های بازار برای تحلیل و پیش‌بینی
         features = [market_data['sentiment'], market_data['volatility'], market_data['price_change']]
         self.market_data.append(features)
         self.labels.append(market_data['buy_sell_signal'])
         return features
-    
+
     def train_models(self):
         # آموزش مدل‌ها با داده‌های بازار
         if len(self.market_data) > 0:
