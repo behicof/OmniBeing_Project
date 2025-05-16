@@ -1,9 +1,10 @@
-from sklearn.ensemble import VotingClassifier
+import requests
+from sklearn.ensemble import VotingClassifier, RandomForestClassifier, AdaBoostClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
-import requests
+from sklearn.metrics import accuracy_score
 
 class FinalRealTimeOptimizationPredictiveSystem:
     def __init__(self):
@@ -31,7 +32,8 @@ class FinalRealTimeOptimizationPredictiveSystem:
 
     def receive_live_data(self, platform_name, data):
         # دریافت داده‌های زنده از پلتفرم‌های مختلف
-        self.live_data.append({"platform": platform_name, "data": data})
+        self.live_data.append(data)
+        return f"Data from {platform_name} received."
 
     def process_market_data(self, market_data):
         # پردازش داده‌های بازار برای تحلیل و پیش‌بینی
@@ -39,7 +41,7 @@ class FinalRealTimeOptimizationPredictiveSystem:
         self.market_data.append(features)
         self.labels.append(market_data['buy_sell_signal'])
         return features
-
+    
     def train_models(self):
         # آموزش مدل‌ها با داده‌های بازار
         if len(self.market_data) > 0:
@@ -73,15 +75,9 @@ class FinalRealTimeOptimizationPredictiveSystem:
     def get_predictions(self):
         return self.multi_stage_predictions
 
-    def fetch_live_data(self, platform_name, url):
-        response = requests.get(url)
-        data = response.json()
-        self.receive_live_data(platform_name, data)
-        return data
-
-    def process_live_data(self):
-        for entry in self.live_data:
-            platform_name = entry['platform']
-            data = entry['data']
-            self.process_market_data(data)
-            self.make_predictions(data)
+    def integrate_data_from_multiple_platforms(self, urls):
+        # دریافت داده‌ها از پلتفرم‌های مختلف
+        for url in urls:
+            response = requests.get(url)
+            data = response.json()
+            self.receive_live_data(url, data)
