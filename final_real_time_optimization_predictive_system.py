@@ -4,8 +4,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
 import requests
-import numpy as np
-from sklearn.metrics import accuracy_score
 
 class FinalRealTimeOptimizationPredictiveSystem:
     def __init__(self):
@@ -74,50 +72,3 @@ class FinalRealTimeOptimizationPredictiveSystem:
     
     def get_predictions(self):
         return self.multi_stage_predictions
-
-    def handle_multiple_sources(self, data_sources):
-        # پردازش داده‌ها از منابع مختلف به صورت همزمان
-        for source in data_sources:
-            self.receive_live_data(source['platform'], source['data'])
-
-    def validate_data(self, data):
-        # اعتبارسنجی داده‌های ورودی
-        required_keys = ['sentiment', 'volatility', 'price_change', 'buy_sell_signal']
-        for key in required_keys:
-            if key not in data:
-                return False
-        return True
-
-    def handle_missing_data(self, data):
-        # مدیریت داده‌های ناقص
-        for key in data:
-            if data[key] is None:
-                data[key] = 0  # جایگزینی داده‌های ناقص با مقدار پیش‌فرض
-        return data
-
-    def synchronize_data_sources(self):
-        # همگام‌سازی داده‌ها از منابع مختلف
-        synchronized_data = []
-        for entry in self.live_data:
-            if self.validate_data(entry['data']):
-                data = self.handle_missing_data(entry['data'])
-                synchronized_data.append(data)
-        return synchronized_data
-
-    def process_live_data(self):
-        # پردازش داده‌های زنده و پیش‌بینی با استفاده از مدل‌ها
-        synchronized_data = self.synchronize_data_sources()
-        for data in synchronized_data:
-            self.process_market_data(data)
-        self.train_models()
-        predictions = []
-        for data in synchronized_data:
-            prediction = self.make_predictions(data)
-            predictions.append(prediction)
-        return predictions
-
-    def audit_data(self):
-        # بررسی دوره‌ای داده‌ها برای اطمینان از صحت و یکپارچگی
-        for entry in self.live_data:
-            if not self.validate_data(entry['data']):
-                self.live_data.remove(entry)
