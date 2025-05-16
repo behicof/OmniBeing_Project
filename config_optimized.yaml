@@ -10,3 +10,5 @@ model:
   epochs: 50
   batch_size: 32
   train_test_split: 0.8
+
+# Ensure MetaTrader 5 is running and connected to your trading account

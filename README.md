@@ -24,7 +24,9 @@ OmniBeing is an innovative project created by behicof. The project aims to integ
 - Install requirements with `pip install -r requirements.txt`
 
 ## Running the Project
-- Run the application with `python src/main/app.py`
+- Install the dependencies listed in `requirements.txt` using `pip install -r requirements.txt`.
+- Configure MetaTrader 5 by installing it, ensuring it is running and connected to your trading account, and setting the parameters in `config_optimized.yaml`.
+- Run the application using `python app.py` or `python run.py`.
 
 ## Testing
 - Run the tests with `pytest`
