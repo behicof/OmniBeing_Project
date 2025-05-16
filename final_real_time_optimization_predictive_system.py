@@ -72,3 +72,16 @@ class FinalRealTimeOptimizationPredictiveSystem:
     
     def get_predictions(self):
         return self.multi_stage_predictions
+
+    def fetch_live_data(self, platform_name, url):
+        response = requests.get(url)
+        data = response.json()
+        self.receive_live_data(platform_name, data)
+        return data
+
+    def process_live_data(self):
+        for entry in self.live_data:
+            platform_name = entry['platform']
+            data = entry['data']
+            self.process_market_data(data)
+            self.make_predictions(data)
