@@ -1,5 +1,10 @@
 import requests
 from sklearn.ensemble import VotingClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+import numpy as np
+from sklearn.metrics import accuracy_score
 
 class GlobalDataIntegrationPredictiveSystem:
     def __init__(self):
@@ -49,11 +54,6 @@ class GlobalDataIntegrationPredictiveSystem:
         if len(self.market_data) > 0:
             X = np.array(self.market_data)
             y = np.array(self.labels)
-            self.rf_model.fit(X, y)
-            self.lr_model.fit(X, y)
-            self.svm_model.fit(X, y)
-            self.gb_model.fit(X, y)
-            self.ada_model.fit(X, y)
             self.voting_classifier.fit(X, y)
     
     def make_predictions(self, market_data):
