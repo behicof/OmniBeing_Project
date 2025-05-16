@@ -1,7 +1,20 @@
+"""
+This file implements a predictive system that integrates various data sources and uses multiple machine learning models to make market predictions.
+
+It defines the `AdvancedDataIntegrationPredictiveSystem` class.
+The class initializes several machine learning models including `RandomForestClassifier`, `LogisticRegression`, `SVC`, `GradientBoostingClassifier`, and `AdaBoostClassifier`.
+It combines these models into a `VotingClassifier` for ensemble learning.
+The class includes methods to process market data, fetch global and social data, train the models, make predictions, and evaluate model accuracy.
+The system aims to predict market trends and generate buy, sell, or hold signals based on the integrated data and trained models.
+"""
+
 import requests
 import numpy as np
 from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier, VotingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 
 class AdvancedDataIntegrationPredictiveSystem:
     def __init__(self):
