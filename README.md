@@ -18,6 +18,7 @@ OmniBeing is an innovative project created by behicof. The project aims to integ
 - Data privacy and security measures for social and global data
 - Continuous improvement process for sentiment analysis models
 - Cross-validation and hyperparameter tuning for model optimization
+- Fetching, storing, and processing live market data from external platforms
 
 ## Installation
 - Clone the repository
@@ -25,9 +26,14 @@ OmniBeing is an innovative project created by behicof. The project aims to integ
 
 ## Running the Project
 - Run the application with `python src/main/app.py`
+- Run the new script to coordinate and run prediction systems with `python src/scripts/run_predictions.py`
 
 ## Testing
 - Run the tests with `pytest`
+
+## Configuration
+- Update the configuration file `config.yaml` with the necessary details for fetching live market data and other settings.
+- Update the configuration file `config_optimized.yaml` with the necessary details for optimized model settings.
 
 ## Contact
 - GitHub: [@behicof](https://github.com/behicof)
