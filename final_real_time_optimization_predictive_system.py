@@ -46,7 +46,7 @@ class FinalRealTimeOptimizationPredictiveSystem:
         self.live_data.append({"platform": platform_name, "data": data})
 
     def process_market_data(self, market_data):
-        # پردازش داده‌های بازار برای تحلیل و پیش‌بینی
+        # Process market data for analysis and prediction
         """
         Extracts features from market data and stores them with the corresponding label.
         
@@ -62,7 +62,7 @@ class FinalRealTimeOptimizationPredictiveSystem:
         return features
 
     def train_models(self):
-        # آموزش مدل‌ها با داده‌های بازار
+        # Train models with market data
         """
         Trains the ensemble voting classifier using accumulated market data and labels.
         
