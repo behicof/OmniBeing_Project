@@ -35,5 +35,17 @@ OmniBeing is an innovative project created by behicof. The project aims to integ
 - Update the configuration file `config.yaml` with the necessary details for fetching live market data and other settings.
 - Update the configuration file `config_optimized.yaml` with the necessary details for optimized model settings.
 
+## Troubleshooting
+- Some packages like MetaTrader5 and pyaudio may not install correctly on certain systems. Ensure you have the necessary system dependencies installed.
+- If you encounter issues with package installation, refer to the official documentation of the package for troubleshooting steps.
+- Ensure that the `config.yaml` and `config_optimized.yaml` files are correctly configured with the necessary paths and API keys.
+- If you face any specific errors, please provide the error message for more precise guidance.
+- Follow steps to ensure `MetaTrader5` and `pyaudio` install correctly:
+  - Install necessary system dependencies (C compiler, portaudio).
+  - Use Python 3.10.
+  - Run `pip install -r requirements.txt`.
+  - Refer to official documentation for troubleshooting.
+  - Ensure `config.yaml` and `config_optimized.yaml` are correctly configured.
+
 ## Contact
 - GitHub: [@behicof](https://github.com/behicof)
