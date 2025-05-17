@@ -35,7 +35,7 @@ class FinalRealTimeOptimizationPredictiveSystem:
         self.live_data = []
 
     def receive_live_data(self, platform_name, data):
-        # دریافت داده‌های زنده از پلتفرم‌های مختلف
+        # Receive live data from various platforms
         """
         Appends incoming live data from a specified platform to the internal live data list.
         
@@ -51,10 +51,10 @@ class FinalRealTimeOptimizationPredictiveSystem:
         Extracts features from market data and stores them with the corresponding label.
         
         Args:
-        	market_data: A dictionary containing 'sentiment', 'volatility', 'price_change', and 'buy_sell_signal' keys.
+            market_data: A dictionary containing 'sentiment', 'volatility', 'price_change', and 'buy_sell_signal' keys.
         
         Returns:
-        	A list of extracted feature values: [sentiment, volatility, price_change].
+            A list of extracted feature values: [sentiment, volatility, price_change].
         """
         features = [market_data['sentiment'], market_data['volatility'], market_data['price_change']]
         self.market_data.append(features)
@@ -67,6 +67,9 @@ class FinalRealTimeOptimizationPredictiveSystem:
         Trains the ensemble voting classifier using accumulated market data and labels.
         
         If market data is available, fits the voting classifier on the stored features and corresponding labels.
+        
+        Returns:
+            None
         """
         if len(self.market_data) > 0:
             X = np.array(self.market_data)
