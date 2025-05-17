@@ -1,0 +1,22 @@
+trading:
+  instrument: "XAUUSD"
+  timeframe: "H1"
+  initial_capital: 10000
+  risk_percentage: 1.5
+  max_positions: 3
+
+model:
+  sequence_length: 60
+  epochs: 50
+  batch_size: 32
+  train_test_split: 0.8
+
+api_keys:
+  market_data_api_key: "your_market_data_api_key_here"
+  social_data_api_key: "your_social_data_api_key_here"
+  global_data_api_key: "your_global_data_api_key_here"
+
+paths:
+  market_data_path: "path/to/market_data"
+  social_data_path: "path/to/social_data"
+  global_data_path: "path/to/global_data"
