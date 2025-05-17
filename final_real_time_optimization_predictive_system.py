@@ -78,7 +78,15 @@ class FinalRealTimeOptimizationPredictiveSystem:
         return None
     
     def make_predictions(self, market_data):
-        # پیش‌بینی با مدل‌های ترکیبی
+        """
+        Makes predictions using the ensemble model based on the provided market data.
+        
+        Args:
+            market_data: A dictionary containing 'sentiment', 'volatility', and 'price_change' keys.
+        
+        Returns:
+            A string representing the combined prediction: 'buy', 'sell', or 'hold'.
+        """
         features = [market_data['sentiment'], market_data['volatility'], market_data['price_change']]
         prediction = self.voting_classifier.predict([features])
         combined_prediction = "hold"
@@ -92,12 +100,17 @@ class FinalRealTimeOptimizationPredictiveSystem:
         return combined_prediction
     
     def evaluate_model_accuracy(self):
-        # ارزیابی دقت مدل‌ها
+        """
+        Evaluates the accuracy of the ensemble model using the stored market data and labels.
+        
+        Returns:
+            A dictionary containing the classification report of the model's performance.
+        """
         X = np.array(self.market_data)
         y = np.array(self.labels)
         predictions = self.voting_classifier.predict(X)
         
-        self.model_accuracy = accuracy_score(y, predictions)
+        self.model_accuracy = classification_report(y, predictions, output_dict=True)
         return self.model_accuracy
     
     def get_predictions(self):
