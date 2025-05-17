@@ -75,6 +75,7 @@ class FinalRealTimeOptimizationPredictiveSystem:
             X = np.array(self.market_data)
             y = np.array(self.labels)
             self.voting_classifier.fit(X, y)
+        return None
     
     def make_predictions(self, market_data):
         # پیش‌بینی با مدل‌های ترکیبی
@@ -115,8 +116,13 @@ class FinalRealTimeOptimizationPredictiveSystem:
         
         Returns:
             The parsed JSON data retrieved from the URL.
+        
+        Raises:
+            requests.exceptions.RequestException: If there is an issue with the network request.
+            JSONDecodeError: If there is an issue with parsing the JSON response.
         """
         response = requests.get(url)
+        response.raise_for_status()  # Raises a HTTPError for bad responses
         data = response.json()
         self.receive_live_data(platform_name, data)
         return data
