@@ -118,7 +118,7 @@ class FinalRealTimeOptimizationPredictiveSystem:
         Returns the list of all predictions made by the ensemble system so far.
         """
         return self.multi_stage_predictions
-
+    
     def fetch_live_data(self, platform_name, url):
         """
         Fetches live market data from a specified URL and stores it with platform metadata.
