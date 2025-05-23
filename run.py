@@ -35,5 +35,9 @@ def main():
     print("Real-time system prediction:", prediction_real_time)
     print("Market optimization system prediction:", prediction_market_optimization)
 
+    # Get and print all predictions made so far by the real-time system
+    all_predictions_real_time = real_time_system.get_predictions()
+    print("All predictions made by the real-time system:", all_predictions_real_time)
+
 if __name__ == "__main__":
     main()
