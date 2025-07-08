@@ -8,9 +8,9 @@ import requests
 class FinalRealTimeOptimizationPredictiveSystem:
     def __init__(self):
         """
-        Initialize the ensemble predictive system with six machine learning classifiers and internal data storage.
+        Initialize the ensemble predictive system with six machine learning classifiers and internal data structures.
         
-        Combines RandomForest, LogisticRegression, SVC, GradientBoosting, AdaBoost, and DecisionTree classifiers into a hard voting ensemble. Sets up lists for storing market data features, labels, predictions, live data entries, and a variable for model accuracy.
+        Creates RandomForest, LogisticRegression, SVC, GradientBoosting, AdaBoost, and DecisionTree classifiers, combining them into a hard voting ensemble. Sets up lists for storing market data features, labels, predictions, live data entries, and a variable for model accuracy.
         """
         self.rf_model = RandomForestClassifier(n_estimators=500)
         self.lr_model = LogisticRegression(max_iter=10000)
@@ -37,24 +37,24 @@ class FinalRealTimeOptimizationPredictiveSystem:
     def receive_live_data(self, platform_name, data):
         # دریافت داده‌های زنده از پلتفرم‌های مختلف
         """
-        Appends live market data from a specified platform to the internal live data storage.
+        Appends live market data from a specified platform to the internal live data list.
         
         Parameters:
-            platform_name: Name of the platform providing the data.
-            data: Live market data to be stored.
+            platform_name: The name of the platform providing the data.
+            data: The live market data to store.
         """
         self.live_data.append({"platform": platform_name, "data": data})
 
     def process_market_data(self, market_data):
         # پردازش داده‌های بازار برای تحلیل و پیش‌بینی
         """
-        Extracts sentiment, volatility, and price change features from market data, stores them for training, and returns the feature list.
+        Extracts sentiment, volatility, and price change features from the input market data and stores them for model training.
         
         Parameters:
-        	market_data (dict): Dictionary containing 'sentiment', 'volatility', 'price_change', and 'buy_sell_signal' keys.
+        	market_data (dict): Market data containing 'sentiment', 'volatility', 'price_change', and 'buy_sell_signal' keys.
         
         Returns:
-        	list: List of extracted feature values [sentiment, volatility, price_change].
+        	list: Extracted feature values as [sentiment, volatility, price_change].
         """
         features = [market_data['sentiment'], market_data['volatility'], market_data['price_change']]
         self.market_data.append(features)
@@ -64,9 +64,9 @@ class FinalRealTimeOptimizationPredictiveSystem:
     def train_models(self):
         # آموزش مدل‌ها با داده‌های بازار
         """
-        Train the ensemble voting classifier on all accumulated market data and labels.
+        Train the ensemble voting classifier using all stored market data and labels.
         
-        Fits the voting classifier using stored feature vectors and their corresponding labels if training data is available.
+        Fits the voting classifier on the accumulated feature vectors and their corresponding labels if any training data is available.
         """
         if len(self.market_data) > 0:
             X = np.array(self.market_data)
@@ -90,10 +90,10 @@ class FinalRealTimeOptimizationPredictiveSystem:
     def evaluate_model_accuracy(self):
         # ارزیابی دقت مدل‌ها
         """
-        Calculate and return the accuracy of the ensemble model on all stored market data.
+        Calculate and return the accuracy of the ensemble voting classifier on all stored market data and labels.
         
         Returns:
-            float: The accuracy score of the voting classifier on the accumulated dataset.
+            float: Accuracy score of the ensemble model on the accumulated dataset.
         """
         X = np.array(self.market_data)
         y = np.array(self.labels)
@@ -113,14 +113,14 @@ class FinalRealTimeOptimizationPredictiveSystem:
 
     def fetch_live_data(self, platform_name, url):
         """
-        Retrieve live market data from a given URL, associate it with a platform name, and store it internally.
+        Fetches live market data from the specified URL, associates it with the given platform name, stores it internally, and returns the parsed data.
         
         Parameters:
-            platform_name (str): Name of the platform providing the data.
-            url (str): Endpoint URL to fetch the live market data.
+            platform_name (str): The name of the platform from which the data is sourced.
+            url (str): The URL endpoint to retrieve live market data.
         
         Returns:
-            dict: Parsed JSON data retrieved from the URL.
+            dict: The JSON-parsed market data retrieved from the URL.
         """
         response = requests.get(url)
         data = response.json()
@@ -129,9 +129,7 @@ class FinalRealTimeOptimizationPredictiveSystem:
 
     def process_live_data(self):
         """
-        Process all stored live data entries and generate predictions for each entry.
-        
-        Iterates through the internal live data list, extracting features and labels from each entry and producing predictions using the ensemble model.
+        Processes all stored live data entries by extracting features and generating predictions for each entry using the ensemble model.
         """
         for entry in self.live_data:
             platform_name = entry['platform']
