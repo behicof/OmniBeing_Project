@@ -1,6 +1,12 @@
-def test_main():
-    print("Testing OmniBeing Project")
-    print("All tests passed!")
+from app import main
 
-if __name__ == "__main__":
-    test_main()
+
+def test_main_output(capsys):
+    """Verify that ``main`` prints the welcome messages."""
+
+    main()
+    captured = capsys.readouterr()
+
+    assert "Welcome to OmniBeing Project!" in captured.out
+    assert "The future is being built here." in captured.out
+    assert "Created by behicof" in captured.out
