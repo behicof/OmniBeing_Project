@@ -1,11 +1,17 @@
 """
 Centralized configuration management for the OmniBeing Trading System.
 Loads configuration from YAML files and provides easy access to settings.
+Enhanced with environment variables and basic logging setup.
 """
 
 import yaml
 import os
+import logging
 from typing import Dict, Any, Optional
+from dotenv import load_dotenv
+
+# Load environment variables from .env file if it exists
+load_dotenv()
 
 
 class Config:
@@ -27,7 +33,36 @@ class Config:
             raise FileNotFoundError(f"Configuration file {self.config_file} not found")
         
         with open(self.config_file, 'r') as file:
-            return yaml.safe_load(file)
+            config_data = yaml.safe_load(file)
+        
+        # Override with environment variables if they exist
+        self._load_environment_overrides(config_data)
+        
+        return config_data
+    
+    def _load_environment_overrides(self, config_data: Dict[str, Any]):
+        """Load environment variable overrides for sensitive data."""
+        env_mappings = {
+            'MARKET_DATA_API_KEY': 'api_keys.market_data_api_key',
+            'BINANCE_API_KEY': 'api_keys.binance_api_key', 
+            'BINANCE_SECRET_KEY': 'api_keys.binance_secret_key',
+            'TRADING_INSTRUMENT': 'trading.instrument',
+            'INITIAL_CAPITAL': 'trading.initial_capital',
+            'RISK_PERCENTAGE': 'trading.risk_percentage',
+        }
+        
+        for env_var, config_path in env_mappings.items():
+            env_value = os.getenv(env_var)
+            if env_value:
+                # Convert numeric values
+                if env_var in ['INITIAL_CAPITAL', 'RISK_PERCENTAGE']:
+                    try:
+                        env_value = float(env_value)
+                    except ValueError:
+                        continue
+                
+                # Set the nested config value
+                self.set(config_path, env_value)
     
     def get(self, key: str, default: Any = None) -> Any:
         """
@@ -147,6 +182,48 @@ class Config:
     def volatility_threshold(self) -> float:
         """Get volatility threshold."""
         return self.get('risk_management.volatility_threshold', 0.8)
+    
+    def setup_logging(self, log_level: str = 'INFO') -> logging.Logger:
+        """
+        Setup basic logging configuration.
+        
+        Args:
+            log_level: Logging level (DEBUG, INFO, WARNING, ERROR)
+            
+        Returns:
+            Configured logger instance
+        """
+        # Create logs directory if it doesn't exist
+        log_dir = self.get('paths.logs_path', 'logs')
+        os.makedirs(log_dir, exist_ok=True)
+        
+        # Configure logging
+        logging.basicConfig(
+            level=getattr(logging, log_level.upper()),
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler(os.path.join(log_dir, 'trading_system.log')),
+                logging.StreamHandler()
+            ]
+        )
+        
+        logger = logging.getLogger('OmniBeing_Trading')
+        logger.info(f"Logging initialized - Level: {log_level}")
+        
+        return logger
+    
+    def get_trading_parameters(self) -> Dict[str, Any]:
+        """Get all trading parameters in one dictionary."""
+        return {
+            'instrument': self.trading_instrument,
+            'timeframe': self.trading_timeframe,
+            'initial_capital': self.initial_capital,
+            'risk_percentage': self.risk_percentage,
+            'max_positions': self.max_positions,
+            'stop_loss_percentage': self.stop_loss_percentage,
+            'take_profit_percentage': self.take_profit_percentage,
+            'volatility_threshold': self.volatility_threshold
+        }
 
 
 # Global configuration instance

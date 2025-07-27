@@ -1,41 +1,32 @@
 """
 Main Trading System Controller for the OmniBeing Trading System.
 Integrates all modules and provides unified API for trading operations.
+Simplified implementation focusing on core functionality.
 """
 
-import asyncio
 import logging
-from typing import Dict, List, Optional, Any, Callable
+from typing import Dict, List, Optional, Any
 from datetime import datetime
 import threading
 import time
 
-# Import existing modules
+# Import existing core modules
 from config import config
 from data_manager import DataManager
 from external_risk_manager import ExternalRiskManager
-
-# Import existing prediction systems
-try:
-    from advanced_predictive_system import AdvancedPredictiveSystem
-except ImportError:
-    AdvancedPredictiveSystem = None
-
-try:
-    from final_real_time_optimization_predictive_system import FinalRealTimeOptimizationPredictiveSystem
-except ImportError:
-    FinalRealTimeOptimizationPredictiveSystem = None
+from gut_trader import IntuitiveDecisionCore
+from market_connectors import MarketConnectorManager
 
 
 class MainTradingSystem:
     """
     Main controller that orchestrates all components of the trading system.
-    Provides clean API for external usage and manages system lifecycle.
+    Simplified implementation focusing on core functionality with existing modules.
     """
     
     def __init__(self):
         """Initialize the main trading system with all components."""
-        self.logger = self._setup_logging()
+        self.logger = config.setup_logging('INFO')
         
         # Core components
         self.config = config
@@ -44,10 +35,11 @@ class MainTradingSystem:
             volatility_threshold=config.volatility_threshold,
             news_impact_weight=0.6
         )
+        self.intuitive_core = IntuitiveDecisionCore()
+        self.market_connector = MarketConnectorManager()
         
-        # Prediction systems
-        self.prediction_systems = {}
-        self._initialize_prediction_systems()
+        # Initialize market connectors
+        self.market_connector.setup_default_connectors()
         
         # System state
         self.is_running = False
@@ -68,38 +60,18 @@ class MainTradingSystem:
         self.main_thread = None
         self.stop_event = threading.Event()
         
-        self.logger.info("MainTradingSystem initialized successfully")
+        self.logger.info("MainTradingSystem initialized successfully with core modules")
+        self.logger.info(f"Trading configuration: {config.get_trading_parameters()}")
     
-    def _setup_logging(self) -> logging.Logger:
-        """Setup logging configuration."""
-        logger = logging.getLogger('TradingSystem')
-        logger.setLevel(logging.INFO)
-        
-        if not logger.handlers:
-            handler = logging.StreamHandler()
-            formatter = logging.Formatter(
-                '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-            )
-            handler.setFormatter(formatter)
-            logger.addHandler(handler)
-        
-        return logger
-    
-    def _initialize_prediction_systems(self):
-        """Initialize available prediction systems."""
+    def connect_to_markets(self) -> Dict[str, bool]:
+        """Connect to all available market connectors."""
         try:
-            if AdvancedPredictiveSystem:
-                self.prediction_systems['advanced'] = AdvancedPredictiveSystem()
-                self.logger.info("Initialized AdvancedPredictiveSystem")
+            results = self.market_connector.connect_all()
+            self.logger.info(f"Market connection results: {results}")
+            return results
         except Exception as e:
-            self.logger.warning(f"Failed to initialize AdvancedPredictiveSystem: {e}")
-        
-        try:
-            if FinalRealTimeOptimizationPredictiveSystem:
-                self.prediction_systems['realtime'] = FinalRealTimeOptimizationPredictiveSystem()
-                self.logger.info("Initialized FinalRealTimeOptimizationPredictiveSystem")
-        except Exception as e:
-            self.logger.warning(f"Failed to initialize FinalRealTimeOptimizationPredictiveSystem: {e}")
+            self.logger.error(f"Error connecting to markets: {e}")
+            return {}
     
     def get_market_data(self, symbol: str = None) -> Dict[str, Any]:
         """
@@ -124,57 +96,47 @@ class MainTradingSystem:
     
     def make_prediction(self, symbol: str = None) -> Dict[str, Any]:
         """
-        Generate trading predictions using available prediction systems.
+        Generate trading predictions using intuitive decision core and market data.
         
         Args:
             symbol: Trading symbol (defaults to configured instrument)
             
         Returns:
-            Dictionary with predictions from all systems
+            Dictionary with prediction results
         """
         if symbol is None:
             symbol = self.config.trading_instrument
         
         try:
+            # Get market data
             market_data = self.get_market_data(symbol)
             if not market_data:
                 return {'error': 'No market data available'}
             
-            predictions = {}
+            # Extract relevant features for intuitive decision
+            pattern_rarity = self._calculate_pattern_rarity(market_data)
+            memory_match_score = self._calculate_memory_match(market_data)
+            emotional_pressure = self._calculate_emotional_pressure(market_data)
             
-            # Get predictions from all available systems
-            for system_name, system in self.prediction_systems.items():
-                try:
-                    # Process market data for the system
-                    if hasattr(system, 'process_market_data'):
-                        system.process_market_data(market_data)
-                    
-                    # Train if needed (for systems that support incremental training)
-                    if hasattr(system, 'train_models') and len(system.market_data) > 10:
-                        system.train_models()
-                    
-                    # Make prediction
-                    if hasattr(system, 'make_predictions'):
-                        prediction = system.make_predictions(market_data)
-                        predictions[system_name] = prediction
-                    
-                except Exception as e:
-                    self.logger.error(f"Error with prediction system {system_name}: {e}")
-                    predictions[system_name] = 'error'
-            
-            # Combine predictions with ensemble method
-            combined_prediction = self._combine_predictions(predictions)
+            # Make intuitive decision
+            decision = self.intuitive_core.decide(
+                pattern_rarity=pattern_rarity,
+                memory_match_score=memory_match_score,
+                emotional_pressure=emotional_pressure
+            )
             
             result = {
                 'symbol': symbol,
                 'timestamp': datetime.now(),
-                'individual_predictions': predictions,
-                'combined_prediction': combined_prediction,
+                'prediction': decision,
+                'pattern_rarity': pattern_rarity,
+                'memory_match_score': memory_match_score,
+                'emotional_pressure': emotional_pressure,
                 'market_data': market_data
             }
             
             self.last_prediction = result
-            self.logger.info(f"Generated prediction for {symbol}: {combined_prediction}")
+            self.logger.info(f"Generated prediction for {symbol}: {decision}")
             
             return result
             
@@ -182,39 +144,47 @@ class MainTradingSystem:
             self.logger.error(f"Error making prediction for {symbol}: {e}")
             return {'error': str(e)}
     
-    def _combine_predictions(self, predictions: Dict[str, Any]) -> str:
-        """
-        Combine predictions from multiple systems using ensemble method.
-        
-        Args:
-            predictions: Dictionary of predictions from different systems
+    def _calculate_pattern_rarity(self, market_data: Dict[str, Any]) -> float:
+        """Calculate pattern rarity based on market data."""
+        try:
+            # Simple implementation: higher volatility = higher rarity
+            volatility = market_data.get('volatility', 0.3)
+            price_change = abs(market_data.get('price_change', 0.0))
             
-        Returns:
-            Combined prediction
-        """
-        if not predictions:
-            return 'hold'
-        
-        # Simple majority voting
-        buy_votes = 0
-        sell_votes = 0
-        hold_votes = 0
-        
-        for system_name, prediction in predictions.items():
-            if prediction == 'buy' or prediction == 1:
-                buy_votes += 1
-            elif prediction == 'sell' or prediction == 0:
-                sell_votes += 1
-            else:
-                hold_votes += 1
-        
-        # Return prediction with most votes
-        if buy_votes > sell_votes and buy_votes > hold_votes:
-            return 'buy'
-        elif sell_votes > buy_votes and sell_votes > hold_votes:
-            return 'sell'
-        else:
-            return 'hold'
+            # Normalize to 0-1 range
+            rarity = min((volatility + price_change) / 2, 1.0)
+            return rarity
+        except Exception:
+            return 0.5  # Default value
+    
+    def _calculate_memory_match(self, market_data: Dict[str, Any]) -> float:
+        """Calculate memory match score using historical patterns."""
+        try:
+            # Simple implementation using RSI and sentiment
+            rsi = market_data.get('rsi', 50.0)
+            sentiment = market_data.get('sentiment', 0.0)
+            
+            # Convert to match score (0-1)
+            rsi_score = abs(rsi - 50) / 50  # Distance from neutral RSI
+            sentiment_score = abs(sentiment)
+            
+            match_score = (rsi_score + sentiment_score) / 2
+            return min(match_score, 1.0)
+        except Exception:
+            return 0.5  # Default value
+    
+    def _calculate_emotional_pressure(self, market_data: Dict[str, Any]) -> float:
+        """Calculate emotional pressure from market conditions."""
+        try:
+            # Simple implementation using volatility and price change
+            volatility = market_data.get('volatility', 0.3)
+            price_change = market_data.get('price_change', 0.0)
+            
+            # High volatility and large price changes create emotional pressure
+            pressure = min(volatility + abs(price_change * 10), 1.0)
+            return pressure
+        except Exception:
+            return 0.3  # Default value
     
     def assess_risk(self, symbol: str = None) -> Dict[str, Any]:
         """
@@ -301,8 +271,8 @@ class MainTradingSystem:
             if current_price <= 0:
                 return {'status': 'error', 'message': 'Invalid price data'}
             
-            # Determine trade details
-            action = signal.get('combined_prediction', 'hold')
+            # Determine trade details based on prediction
+            action = signal.get('prediction', 'wait')
             
             if action == 'buy':
                 position_type = 'long'
@@ -400,13 +370,14 @@ class MainTradingSystem:
         return {
             'is_running': self.is_running,
             'is_trading_enabled': self.is_trading_enabled,
-            'prediction_systems': list(self.prediction_systems.keys()),
+            'core_modules': ['IntuitiveDecisionCore', 'ExternalRiskManager', 'DataManager'],
             'last_prediction': self.last_prediction,
             'last_risk_assessment': self.last_risk_assessment,
             'performance_metrics': self.performance_metrics,
             'active_positions': len(self.risk_manager.portfolio),
             'account_balance': self.risk_manager.account_balance,
-            'total_exposure': self.risk_manager.total_exposure
+            'total_exposure': self.risk_manager.total_exposure,
+            'trading_parameters': self.config.get_trading_parameters()
         }
     
     def start_real_time_trading(self, update_interval: int = 60):
@@ -432,8 +403,8 @@ class MainTradingSystem:
                     prediction = self.make_prediction()
                     
                     # Execute trade if conditions are met
-                    if prediction and 'combined_prediction' in prediction:
-                        if prediction['combined_prediction'] in ['buy', 'sell']:
+                    if prediction and 'prediction' in prediction:
+                        if prediction['prediction'] in ['buy', 'sell']:
                             trade_result = self.execute_trade(prediction)
                             self.logger.info(f"Trade execution result: {trade_result.get('status', 'unknown')}")
                     

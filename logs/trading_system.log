@@ -1,0 +1,16 @@
+2025-07-27 07:08:31,893 - OmniBeing_Trading - INFO - Logging initialized - Level: INFO
+2025-07-27 07:11:38,295 - OmniBeing_Trading - INFO - Logging initialized - Level: INFO
+2025-07-27 07:11:38,296 - OmniBeing_Trading - INFO - MainTradingSystem initialized successfully with core modules
+2025-07-27 07:11:38,296 - OmniBeing_Trading - INFO - Trading configuration: {'instrument': 'XAUUSD', 'timeframe': 'H1', 'initial_capital': 10000, 'risk_percentage': 1.5, 'max_positions': 3, 'stop_loss_percentage': 2.0, 'take_profit_percentage': 3.0, 'volatility_threshold': 0.8}
+2025-07-27 07:11:38,296 - OmniBeing_Trading - INFO - Logging initialized - Level: INFO
+2025-07-27 07:11:38,296 - OmniBeing_Trading - INFO - MainTradingSystem initialized successfully with core modules
+2025-07-27 07:11:38,296 - OmniBeing_Trading - INFO - Trading configuration: {'instrument': 'XAUUSD', 'timeframe': 'H1', 'initial_capital': 10000, 'risk_percentage': 1.5, 'max_positions': 3, 'stop_loss_percentage': 2.0, 'take_profit_percentage': 3.0, 'volatility_threshold': 0.8}
+2025-07-27 07:11:38,296 - OmniBeing_Trading - INFO - Market connection results: {'mock': True, 'binance': False}
+2025-07-27 07:11:54,801 - OmniBeing_Trading - INFO - Logging initialized - Level: INFO
+2025-07-27 07:11:54,801 - OmniBeing_Trading - INFO - MainTradingSystem initialized successfully with core modules
+2025-07-27 07:11:54,801 - OmniBeing_Trading - INFO - Trading configuration: {'instrument': 'XAUUSD', 'timeframe': 'H1', 'initial_capital': 10000, 'risk_percentage': 1.5, 'max_positions': 3, 'stop_loss_percentage': 2.0, 'take_profit_percentage': 3.0, 'volatility_threshold': 0.8}
+2025-07-27 07:11:54,801 - OmniBeing_Trading - INFO - Logging initialized - Level: INFO
+2025-07-27 07:11:54,801 - OmniBeing_Trading - INFO - MainTradingSystem initialized successfully with core modules
+2025-07-27 07:11:54,801 - OmniBeing_Trading - INFO - Trading configuration: {'instrument': 'XAUUSD', 'timeframe': 'H1', 'initial_capital': 10000, 'risk_percentage': 1.5, 'max_positions': 3, 'stop_loss_percentage': 2.0, 'take_profit_percentage': 3.0, 'volatility_threshold': 0.8}
+2025-07-27 07:11:54,801 - OmniBeing_Trading - INFO - Market connection results: {'mock': True, 'binance': False}
+2025-07-27 07:11:54,821 - OmniBeing_Trading - INFO - Generated prediction for XAUUSD: wait
