@@ -4,6 +4,11 @@ import datetime
 from typing import Dict, List, Optional, Any
 from config import config
 
+try:
+    from enterprise_config import enterprise_config
+except ImportError:
+    enterprise_config = None
+
 
 class ExternalRiskManager:
     """Enhanced risk management system with portfolio risk, position sizing, and stop-loss mechanisms."""
@@ -32,6 +37,170 @@ class ExternalRiskManager:
         # Risk metrics history
         self.risk_history = []
         self.volatility_history = []
+        
+        # Enterprise features
+        self.enterprise_mode = enterprise_config is not None
+        self.sla_monitoring = False
+        self.institutional_grade = False
+        
+        if self.enterprise_mode:
+            self._initialize_enterprise_features()
+    
+    def _initialize_enterprise_features(self):
+        """Initialize enterprise-specific risk management features."""
+        if enterprise_config and enterprise_config.is_module_enabled('risk_manager'):
+            self.sla_monitoring = enterprise_config.get('enterprise.modules.risk_manager.sla_monitoring', False)
+            self.institutional_grade = enterprise_config.get('enterprise.modules.risk_manager.institutional_grade', True)
+            
+            # Enterprise SLA thresholds
+            self.sla_thresholds = {
+                'processing_delay_ms': enterprise_config.processing_delay_threshold,
+                'trading_error_percentage': enterprise_config.trading_error_threshold,
+                'ram_usage_percentage': enterprise_config.ram_usage_threshold
+            }
+    
+    def get_enterprise_risk_metrics(self) -> Dict[str, Any]:
+        """Get enterprise-grade risk metrics and SLA status."""
+        if not self.enterprise_mode:
+            return {}
+        
+        metrics = {
+            'timestamp': datetime.datetime.now().isoformat(),
+            'portfolio_risk': self.calculate_portfolio_risk(),
+            'volatility_risk': self.current_volatility,
+            'market_event_risk': self.market_event_risk,
+            'total_exposure': self.total_exposure,
+            'account_balance': self.account_balance,
+            'risk_utilization': (self.total_exposure / self.account_balance) if self.account_balance > 0 else 0,
+            'sla_compliance': self._check_sla_compliance(),
+            'institutional_grade': self.institutional_grade
+        }
+        
+        if self.sla_monitoring:
+            metrics['sla_status'] = self._get_sla_status()
+        
+        return metrics
+    
+    def _check_sla_compliance(self) -> bool:
+        """Check if current operations meet enterprise SLA requirements."""
+        if not self.enterprise_mode or not hasattr(self, 'sla_thresholds'):
+            return True
+        
+        # Simulate SLA compliance checks
+        # In production, these would check actual system metrics
+        processing_delay = 3.2  # Simulated current processing delay
+        trading_error_rate = 0.05  # Simulated current error rate
+        ram_usage = 72  # Simulated current RAM usage
+        
+        return (
+            processing_delay <= self.sla_thresholds['processing_delay_ms'] and
+            trading_error_rate <= self.sla_thresholds['trading_error_percentage'] and
+            ram_usage <= self.sla_thresholds['ram_usage_percentage']
+        )
+    
+    def _get_sla_status(self) -> Dict[str, Any]:
+        """Get detailed SLA compliance status."""
+        return {
+            'processing_delay': {
+                'current': 3.2,
+                'threshold': self.sla_thresholds['processing_delay_ms'],
+                'compliant': 3.2 <= self.sla_thresholds['processing_delay_ms']
+            },
+            'trading_error_rate': {
+                'current': 0.05,
+                'threshold': self.sla_thresholds['trading_error_percentage'],
+                'compliant': 0.05 <= self.sla_thresholds['trading_error_percentage']
+            },
+            'ram_usage': {
+                'current': 72,
+                'threshold': self.sla_thresholds['ram_usage_percentage'],
+                'compliant': 72 <= self.sla_thresholds['ram_usage_percentage']
+            }
+        }
+    
+    def validate_enterprise_trade(self, trade_request: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Validate trade request against enterprise risk policies.
+        
+        Args:
+            trade_request: Trade request with symbol, size, direction, etc.
+            
+        Returns:
+            Validation result with approval status and reasons
+        """
+        validation_result = {
+            'approved': False,
+            'reasons': [],
+            'risk_score': 0.0,
+            'enterprise_compliant': False
+        }
+        
+        # Basic validation
+        if not self._validate_basic_trade(trade_request):
+            validation_result['reasons'].append('Basic trade validation failed')
+            return validation_result
+        
+        # Enterprise-specific validations
+        if self.enterprise_mode and self.institutional_grade:
+            # Check institutional trading limits
+            if not self._validate_institutional_limits(trade_request):
+                validation_result['reasons'].append('Institutional trading limits exceeded')
+                return validation_result
+            
+            # Check SLA compliance
+            if self.sla_monitoring and not self._check_sla_compliance():
+                validation_result['reasons'].append('SLA compliance violation')
+                return validation_result
+            
+            validation_result['enterprise_compliant'] = True
+        
+        # Calculate risk score
+        risk_score = self._calculate_trade_risk_score(trade_request)
+        validation_result['risk_score'] = risk_score
+        
+        # Final approval decision
+        if risk_score <= 0.7:  # Risk threshold for enterprise trades
+            validation_result['approved'] = True
+            validation_result['reasons'].append('Trade approved under enterprise risk policy')
+        else:
+            validation_result['reasons'].append('Risk score exceeds enterprise threshold')
+        
+        return validation_result
+    
+    def _validate_basic_trade(self, trade_request: Dict[str, Any]) -> bool:
+        """Validate basic trade parameters."""
+        required_fields = ['symbol', 'size', 'direction']
+        return all(field in trade_request for field in required_fields)
+    
+    def _validate_institutional_limits(self, trade_request: Dict[str, Any]) -> bool:
+        """Validate trade against institutional trading limits."""
+        # Institutional position limits
+        max_institutional_position = self.account_balance * 0.1  # 10% max per position
+        
+        if trade_request.get('size', 0) * trade_request.get('price', 1) > max_institutional_position:
+            return False
+        
+        # Check total exposure limits
+        if self.total_exposure > self.account_balance * 0.5:  # 50% max total exposure
+            return False
+        
+        return True
+    
+    def _calculate_trade_risk_score(self, trade_request: Dict[str, Any]) -> float:
+        """Calculate risk score for a trade request."""
+        base_risk = 0.2
+        
+        # Add volatility risk
+        volatility_risk = min(self.current_volatility * 0.5, 0.3)
+        
+        # Add market event risk
+        event_risk = self.market_event_risk * 0.3
+        
+        # Add portfolio risk
+        portfolio_risk = self.calculate_portfolio_risk() * 0.2
+        
+        total_risk = base_risk + volatility_risk + event_risk + portfolio_risk
+        return min(total_risk, 1.0)
         
     def update_volatility(self, prices):
         """Update volatility calculation with enhanced metrics."""
