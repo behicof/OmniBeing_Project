@@ -36,7 +36,7 @@ class DataManager:
         """
         # Mock implementation - in production, this would connect to real APIs
         # For now, generate sample data to demonstrate the structure
-        dates = pd.date_range(end=datetime.now(), periods=limit, freq='1H')
+        dates = pd.date_range(end=datetime.now(), periods=limit, freq='1h')
         
         # Generate realistic-looking sample data
         np.random.seed(42)

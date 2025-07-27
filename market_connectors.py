@@ -7,6 +7,7 @@ import asyncio
 import websocket
 import json
 import time
+import ccxt
 from typing import Dict, List, Any, Optional, Callable
 from datetime import datetime
 import threading
@@ -173,39 +174,124 @@ class MockExchangeConnector(ExchangeConnector):
         return self.mock_balance.copy()
 
 
-class BinanceConnector(ExchangeConnector):
-    """Binance exchange connector (basic implementation)."""
+class CCXTExchangeConnector(ExchangeConnector):
+    """CCXT-based exchange connector for real trading."""
     
-    def __init__(self, api_key: str = None, secret_key: str = None):
-        """Initialize Binance connector."""
+    def __init__(self, exchange_id: str = 'binance', api_key: str = None, secret_key: str = None, sandbox: bool = True):
+        """
+        Initialize CCXT connector.
+        
+        Args:
+            exchange_id: Exchange identifier (e.g., 'binance', 'kraken')
+            api_key: API key for the exchange
+            secret_key: Secret key for the exchange
+            sandbox: Use sandbox mode for testing
+        """
         super().__init__(api_key, secret_key)
-        self.base_url = "https://api.binance.com"
-        self.ws_url = "wss://stream.binance.com:9443/ws/"
+        self.exchange_id = exchange_id
+        self.sandbox = sandbox
+        self.exchange = None
         
     def connect(self) -> bool:
-        """Connect to Binance (placeholder implementation)."""
-        # In a real implementation, this would establish connection to Binance API
-        print("Binance connector: This is a placeholder implementation")
-        print("To use real Binance API, install python-binance and implement proper authentication")
-        self.is_connected = False
-        return False
+        """Connect to exchange via CCXT."""
+        try:
+            # Initialize exchange
+            exchange_class = getattr(ccxt, self.exchange_id)
+            
+            self.exchange = exchange_class({
+                'apiKey': self.api_key,
+                'secret': self.secret_key,
+                'sandbox': self.sandbox,
+                'enableRateLimit': True,
+            })
+            
+            # Test connection
+            if self.api_key and self.secret_key:
+                # Try to fetch balance as a connection test
+                self.exchange.fetch_balance()
+                self.is_connected = True
+                return True
+            else:
+                # No credentials provided - use public endpoints only
+                self.exchange.fetch_ticker('BTC/USDT')  # Test public endpoint
+                self.is_connected = True
+                return True
+                
+        except Exception as e:
+            print(f"Failed to connect to {self.exchange_id}: {e}")
+            # Fall back to mock mode
+            self.is_connected = False
+            return False
     
     def disconnect(self):
-        """Disconnect from Binance."""
+        """Disconnect from exchange."""
         self.is_connected = False
+        self.exchange = None
     
     def get_market_data(self, symbol: str) -> Dict[str, Any]:
-        """Get Binance market data (placeholder)."""
-        raise NotImplementedError("Real Binance implementation required")
+        """Get real market data via CCXT."""
+        if not self.is_connected or not self.exchange:
+            raise ConnectionError("Not connected to exchange")
+        
+        try:
+            # Fetch ticker data
+            ticker = self.exchange.fetch_ticker(symbol)
+            
+            return {
+                'symbol': symbol,
+                'price': ticker['last'],
+                'bid': ticker['bid'],
+                'ask': ticker['ask'],
+                'volume': ticker['baseVolume'],
+                'timestamp': datetime.fromtimestamp(ticker['timestamp'] / 1000)
+            }
+        except Exception as e:
+            print(f"Error fetching market data for {symbol}: {e}")
+            raise
     
     def place_order(self, symbol: str, side: str, amount: float, 
                    price: float = None, order_type: str = 'market') -> Dict[str, Any]:
-        """Place Binance order (placeholder)."""
-        raise NotImplementedError("Real Binance implementation required")
+        """Place order via CCXT."""
+        if not self.is_connected or not self.exchange:
+            raise ConnectionError("Not connected to exchange")
+        
+        if not self.api_key or not self.secret_key:
+            raise ValueError("API credentials required for trading")
+        
+        try:
+            if order_type == 'market':
+                order = self.exchange.create_market_order(symbol, side, amount)
+            else:
+                order = self.exchange.create_limit_order(symbol, side, amount, price)
+            
+            return {
+                'id': order['id'],
+                'symbol': symbol,
+                'side': side,
+                'amount': amount,
+                'price': order.get('price', price),
+                'type': order_type,
+                'status': order['status'],
+                'timestamp': datetime.fromtimestamp(order['timestamp'] / 1000)
+            }
+        except Exception as e:
+            print(f"Error placing order: {e}")
+            raise
     
     def get_account_balance(self) -> Dict[str, float]:
-        """Get Binance account balance (placeholder)."""
-        raise NotImplementedError("Real Binance implementation required")
+        """Get account balance via CCXT."""
+        if not self.is_connected or not self.exchange:
+            raise ConnectionError("Not connected to exchange")
+        
+        if not self.api_key or not self.secret_key:
+            raise ValueError("API credentials required for account data")
+        
+        try:
+            balance = self.exchange.fetch_balance()
+            return balance['free']  # Return free balances
+        except Exception as e:
+            print(f"Error fetching balance: {e}")
+            raise
 
 
 class WebSocketDataStream:
@@ -389,18 +475,26 @@ class MarketConnectorManager:
         self.data_callbacks.append(callback)
     
     def setup_default_connectors(self):
-        """Setup default connectors (mock for testing)."""
+        """Setup default connectors (mock for testing, CCXT for real trading)."""
         # Add mock connector for testing
         mock_connector = MockExchangeConnector()
         self.add_connector('mock', mock_connector)
         
-        # Add Binance connector (placeholder)
-        if config.binance_api_key and config.binance_secret_key:
-            binance_connector = BinanceConnector(
-                config.binance_api_key, 
-                config.binance_secret_key
+        # Add CCXT-based connector for real trading
+        try:
+            ccxt_connector = CCXTExchangeConnector(
+                exchange_id='binance',
+                api_key=config.binance_api_key if config.binance_api_key != 'your_binance_api_key_here' else None,
+                secret_key=config.binance_secret_key if config.binance_secret_key != 'your_binance_secret_key_here' else None,
+                sandbox=True  # Use sandbox mode by default
             )
-            self.add_connector('binance', binance_connector)
+            self.add_connector('ccxt_binance', ccxt_connector)
+        except Exception as e:
+            print(f"Failed to setup CCXT connector: {e}")
+        
+        # Legacy placeholder (kept for compatibility)
+        if config.binance_api_key and config.binance_secret_key:
+            print("Note: For full CCXT integration, ensure API keys are properly configured")
 
 
 # Global market connector manager instance

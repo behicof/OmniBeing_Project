@@ -3,3 +3,26 @@ __pycache__/
 venv/
 .idea/
 .vscode/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+
+# Build artifacts and dependencies
+=*
+build/
+dist/
+*.egg-info/
+node_modules/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS files
+.DS_Store
+Thumbs.db
