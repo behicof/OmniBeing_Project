@@ -1,0 +1,1 @@
+2025-07-27 07:37:59,776 - INFO - METRIC: {"timestamp": "2025-07-27T07:37:59.776635", "metric_name": "test_metric", "value": 123.45, "category": "trading", "tags": {}}
