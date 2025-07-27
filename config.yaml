@@ -15,8 +15,17 @@ api_keys:
   market_data_api_key: "your_market_data_api_key_here"
   social_data_api_key: "your_social_data_api_key_here"
   global_data_api_key: "your_global_data_api_key_here"
+  binance_api_key: "your_binance_api_key_here"
+  binance_secret_key: "your_binance_secret_key_here"
+
+risk_management:
+  stop_loss_percentage: 2.0
+  take_profit_percentage: 3.0
+  volatility_threshold: 0.8
+  max_drawdown_percentage: 20.0
 
 paths:
   market_data_path: "path/to/market_data"
   social_data_path: "path/to/social_data"
   global_data_path: "path/to/global_data"
+  logs_path: "logs"

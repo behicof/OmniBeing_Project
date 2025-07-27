@@ -2,11 +2,11 @@ from app import main
 
 
 def test_main_output(capsys):
-    """Verify that ``main`` prints the welcome messages."""
+    """Verify that ``main`` prints the trading system demo messages."""
 
     main()
     captured = capsys.readouterr()
 
-    assert "Welcome to OmniBeing Project!" in captured.out
-    assert "The future is being built here." in captured.out
+    assert "OmniBeing Trading System - Complete Integration Demo" in captured.out
     assert "Created by behicof" in captured.out
+    assert "Trading System Demo Complete!" in captured.out
