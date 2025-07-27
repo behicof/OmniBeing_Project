@@ -1,0 +1,121 @@
+# Production Environment Configuration for OmniBeing Trading System
+
+environment: production
+
+# Database Configuration
+database:
+  host: omnibeing-postgresql
+  port: 5432
+  database: omnibeing_trading
+  username: omnibeing
+  password_encrypted: "" # Set via environment variable
+  ssl_mode: require
+  pool_size: 20
+  max_overflow: 10
+  pool_timeout: 30
+  pool_recycle: 3600
+
+# Redis Configuration
+redis:
+  host: omnibeing-redis
+  port: 6379
+  database: 0
+  password_encrypted: "" # Set via environment variable
+  ssl: true
+  socket_timeout: 5
+  max_connections: 100
+
+# Security Configuration
+security:
+  jwt_secret_key_encrypted: "" # Set via environment variable
+  api_rate_limit: 1000
+  session_timeout: 3600
+  max_login_attempts: 5
+  password_min_length: 12
+  require_mfa: true
+  allowed_origins:
+    - "https://omnibeing.com"
+    - "https://app.omnibeing.com"
+    - "https://api.omnibeing.com"
+
+# Monitoring Configuration
+monitoring:
+  prometheus_port: 9090
+  grafana_port: 3000
+  alert_email: "admin@omnibeing.com"
+  alert_slack_webhook_encrypted: "" # Set via environment variable
+  log_level: INFO
+  metrics_retention_days: 30
+
+# Auto-Scaling Configuration
+scaling:
+  min_instances: 2
+  max_instances: 10
+  cpu_threshold: 70.0
+  memory_threshold: 80.0
+  scale_up_cooldown: 300
+  scale_down_cooldown: 600
+  health_check_interval: 30
+
+# Trading Configuration
+trading:
+  instrument: "XAUUSD"
+  timeframe: "H1"
+  initial_capital: 100000
+  risk_percentage: 1.0
+  max_positions: 5
+
+# Exchange Configuration
+exchanges:
+  binance:
+    api_key: "" # Set via environment variable
+    secret: "" # Set via environment variable
+    sandbox: false
+  coinbase:
+    api_key: "" # Set via environment variable
+    secret: "" # Set via environment variable
+    sandbox: false
+  kraken:
+    api_key: "" # Set via environment variable
+    secret: "" # Set via environment variable
+    sandbox: false
+
+# Risk Management
+risk_management:
+  stop_loss_percentage: 2.0
+  take_profit_percentage: 3.0
+  volatility_threshold: 0.8
+  max_drawdown_percentage: 15.0
+  position_size_limit: 0.1
+  daily_loss_limit: 0.05
+  max_leverage: 3.0
+
+# Compliance Configuration
+compliance:
+  jurisdictions:
+    - SEC
+    - CFTC
+  large_trader_threshold: 2000000
+  position_limit_threshold: 5000000
+  aml_suspicious_volume: 1000000
+  tax_calculation_enabled: true
+  audit_retention_days: 2555 # 7 years
+
+# API Configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+  max_request_size: 16777216 # 16MB
+  request_timeout: 300
+  cors_enabled: true
+  rate_limiting_enabled: true
+
+# Paths
+paths:
+  market_data_path: "/app/data/market"
+  social_data_path: "/app/data/social"
+  global_data_path: "/app/data/global"
+  logs_path: "/app/logs"
+  reports_path: "/app/reports"
+  backups_path: "/app/backups"

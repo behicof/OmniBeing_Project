@@ -1,27 +1,66 @@
+# Core dependencies
 numpy>=1.20.0
 pandas>=1.3.0
+PyYAML>=6.0
+requests>=2.25.1
+asyncio>=3.4.3
+
+# Production infrastructure
+fastapi>=0.104.0
+uvicorn>=0.24.0
+redis>=5.0.0
+asyncpg>=0.29.0
+psutil>=5.9.0
+docker>=6.1.0
+
+# Security and authentication
+cryptography>=41.0.0
+bcrypt>=4.0.0
+PyJWT>=2.8.0
+
+# Monitoring and metrics
+prometheus-client>=0.17.0
+
+# Data science and ML
 scikit-learn>=1.0.0
 tensorflow>=2.8.0
 keras>=2.8.0
 matplotlib>=3.5.0
-MetaTrader5>=5.0.34
-PyYAML>=6.0
-pyttsx3>=2.90
-SpeechRecognition>=3.8.1
-pyaudio>=0.2.11
-pytest>=6.2.5
-dask>=2021.10.0
-pyspark>=3.1.2
-boto3>=1.18.0
-google-cloud-aiplatform>=1.7.0
-transformers>=4.11.0
-requests>=2.25.1
+
+# Trading and financial
 ccxt>=4.0.0
 websocket-client>=1.6.0
 python-binance>=1.0.19
 TA-Lib>=0.4.25
-fastapi>=0.104.0
-uvicorn>=0.24.0
-redis>=5.0.0
+
+# Development and testing
+pytest>=6.2.5
+black>=23.0.0
+flake8>=6.0.0
+isort>=5.12.0
+bandit>=1.7.0
+safety>=2.3.0
+
+# CI/CD and deployment
+GitPython>=3.1.0
+pydantic>=2.0.0
+
+# GraphQL API
+strawberry-graphql>=0.200.0
+
+# Optional cloud providers
+boto3>=1.18.0
+google-cloud-aiplatform>=1.7.0
+
+# Optional voice/speech
+pyttsx3>=2.90
+SpeechRecognition>=3.8.1
+
+# Optional big data
+dask>=2021.10.0
+
+# Optional transformers
+transformers>=4.11.0
+
+# File handling
 aiofiles>=23.2.0
-asyncio-mqtt>=0.16.0
