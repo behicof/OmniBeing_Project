@@ -1,0 +1,1 @@
+2025-07-27 07:37:59,776 - INFO - TRADE: {"timestamp": "2025-07-27T07:37:59.776481", "symbol": "XAUUSD", "action": "buy", "price": 2000.0, "quantity": 0.1, "order_id": "TEST_001", "execution_time": 0.05, "commission": 0.0, "pnl": null, "strategy": "default", "metadata": null}
