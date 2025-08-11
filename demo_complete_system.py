@@ -149,7 +149,7 @@ def demo_data_management():
         data_manager = DataManager()
         
         print_section("Market Data Retrieval")
-        market_data = data_manager.fetch_market_data(config.trading_instrument, limit=10)
+        market_data = data_manager.fetch_historical_data(config.trading_instrument, limit=10)
         if market_data is not None:
             print(f"   Retrieved {len(market_data)} data points for {config.trading_instrument}")
             print(f"   Columns: {list(market_data.columns)}")
@@ -157,7 +157,7 @@ def demo_data_management():
         
         print_section("Technical Indicators")
         if market_data is not None:
-            enriched_data = data_manager.add_technical_indicators(market_data)
+            enriched_data = data_manager.calculate_technical_indicators(market_data)
             technical_cols = [col for col in enriched_data.columns if col not in ['open', 'high', 'low', 'close', 'volume']]
             print(f"   Added {len(technical_cols)} technical indicators")
             print(f"   Indicators: {', '.join(technical_cols[:5])}...")  # Show first 5
